@@ -26,6 +26,16 @@ function controls(graphOFICIAL) {
         .force("charge", d3.forceManyBody())
         .force("center", d3.forceCenter(width / 2, height / 2));
 
+        var label = svg.selectAll(".mytext")
+        .data(graphOFICIAL.nodes)
+        .enter()
+        .append("text")
+        .text(function (d) { return d.name; })
+        .style("text-anchor", "middle")
+        .style("fill", "#555")
+        .style("font-family", "Arial")
+        .style("font-size", 10);
+    
     update(graphOFICIAL.links, graphOFICIAL.nodes)
 
     function update(links, nodes) {
@@ -107,6 +117,10 @@ function controls(graphOFICIAL) {
 
         node
             .attr("transform", function (d) {return "translate(" + d.x + ", " + d.y + ")";});
+
+            label
+            .attr("x", function(d){ return d.x; })
+            .attr("y", function (d) {return d.y - 10; });
 
         edgepaths.attr('d', function (d) {
             return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
@@ -250,15 +264,18 @@ class Graph{
 function prepare_graph(cosa){
     
     cosa.nodes.forEach( node => {
+        node.set = 5;
         if (cosa.initial == node.id && cosa.acceptance.includes(node.id)){
-            node.set = 10
+            console.log('aqui')
+            node.set = 1 //rjo
         }
         else if (cosa.acceptance.includes(node.id)){
-            node.set = 0 // verde
+            node.set = 0 // naranja
         }
         else if (cosa.initial == node.id){
-            node.set = 2; // azul
+            node.set = 2; // verde
         }
+
     })
     let graph = {
         "nodes":cosa.nodes,
