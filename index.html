@@ -71,6 +71,9 @@
   width: 12.5%;
 }
 
+.slidecontainer{
+  width: 100%;
+}
 
 </style>
   <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -98,6 +101,9 @@
       <div class="regex">
         <input type="text" name="regex" id="regex" class="regex_input">
         <button type="button" class="btn-submit" id="btn">Convertir</button> 
+        <div class="slidecontainer">
+          <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+        </div>
       </div>  
     </div>
 

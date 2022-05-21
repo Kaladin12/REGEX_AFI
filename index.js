@@ -1,6 +1,5 @@
 function controls(graphOFICIAL) {
     var colors = d3.scaleOrdinal(d3.schemeCategory10);
-    console.log(graphOFICIAL)
     var svg = d3.select("svg").call(d3.zoom().on("zoom", function () {
         svg.attr("transform", d3.event.transform)
         })).append('g'),
@@ -19,7 +18,7 @@ function controls(graphOFICIAL) {
             'markerHeight':13,
             'xoverflow':'visible'})
         .append('svg:path')
-        .attr('d', 'M 0,-5 L 10 ,10 L 0,5')
+        .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
         .style('stroke','black')
         
     var simulation = d3.forceSimulation()
@@ -180,7 +179,9 @@ class Graph{
         // al ser una concatenacion de simbolos, solo tenemos un nodo de aceptacion
         this.acceptance = [taken_values-1];
         // regresamos la instancia de Graph
-        all.push(Object.assign(Object.create(Object.getPrototypeOf(this)), this))
+        const current = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
+        console.log("CONCAT SYMBOL", current)
+        all.push([current, "SYMB"])
         return this
     }
     // recibimos una expresion, la cual es una instancia de Graph
@@ -199,7 +200,9 @@ class Graph{
         // los estados de aceptacion se vuelven los de b, ya que los anteriores ahora apuntan hacia
         // el incial de b
         this.acceptance = exp_b.acceptance;
-        all.push(Object.assign(Object.create(Object.getPrototypeOf(this)), this))
+        const current = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
+        console.log("CONCAT EXP", current)
+        all.push([current, "EXP"])
         return this
     }
     // recibimos una instancia de Graph
@@ -219,7 +222,9 @@ class Graph{
         this.acceptance = this.acceptance.concat( graph_b.acceptance )
         // solo agregamos un nodo nuevo
         taken_values += 1
-        all.push(Object.assign(Object.create(Object.getPrototypeOf(this)), this))
+        const current = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
+        console.log("UNION", current)
+        all.push([current, "UNION"])
         return this
     }
     // operacion unaria
@@ -235,12 +240,15 @@ class Graph{
         // el nuevo estado inicial es el nodo agregado
         this.initial = taken_values;
         taken_values +=1;
-        all.push(Object.assign(Object.create(Object.getPrototypeOf(this)), this))
+        const current = Object.assign(Object.create(Object.getPrototypeOf(this)), this);
+        console.log("STAR", current)
+        all.push([current, "STAR"])
+
     }
 }
 
-function prepare_graph(regex){
-    let cosa = recursiva(regex, 0);
+function prepare_graph(cosa){
+    
     cosa.nodes.forEach( node => {
         if (cosa.initial == node.id && cosa.acceptance.includes(node.id)){
             node.set = 10
@@ -249,7 +257,6 @@ function prepare_graph(regex){
             node.set = 0 // verde
         }
         else if (cosa.initial == node.id){
-            console.log(node)
             node.set = 2; // azul
         }
     })
@@ -263,6 +270,7 @@ function prepare_graph(regex){
 
 var taken_values = 0 
 let btn_submit = document.getElementById("btn");
+let slider = document.getElementById("myRange");
 let dict = null;
 btn_submit.addEventListener("click", () => {
     d3.selectAll("svg > *").remove();
@@ -271,9 +279,22 @@ btn_submit.addEventListener("click", () => {
 
     let dictTemp = findParenthesisPairs(regex);
     dict = dictTemp;
-    controls(prepare_graph(regex));
-    console.log(all) 
+    let cosa = recursiva(regex, 0);
+    controls(prepare_graph(cosa));
+    slider.min = 1;
+    slider.max = all.length;
+    slider.value = 1;
+    console.log("all",all) 
 })
+
+slider.addEventListener("change", () => {
+    let val = slider.value;
+    d3.selectAll("svg > *").remove();
+    console.log(all[val-1]);
+    controls(prepare_graph( all[val-1][0] ));
+    //console.log('value', val);
+})
+
 
 const terminales = ["0","1", "a", "b", "c"]
 let my_graph = null;
@@ -332,7 +353,6 @@ function has_parenthesis(regex, offset, temp){
         }
         else{
             temp = recursiva(regex.substring(1, pos_star-1), pos_star+1, temp);
-            console.log(regex, offset, pos_star)
             if (regex.substring(pos_star-offset)!=''  && regex.substring(pos_star-offset)!=')'){
                 if (regex.substring(pos_star-offset)[0] == '('|| terminales.includes(regex.substring(pos_star-offset)[0]) ){
                     temp = temp.concat_expressions(recursiva(regex.substring(pos_star+1),pos_star+1,temp))
@@ -350,12 +370,10 @@ function has_parenthesis(regex, offset, temp){
 }
 
 function recursiva(regex, offset, temp=null){
-    console.log(regex)
     if( terminales.includes(regex[0])){
         temp = terminal(regex, offset, temp);
     } 
     else if (regex[0] == 'U'){
-        console.log('eee', temp)
         temp.union( recursiva(regex.substring(1), offset+1, temp ));
     }
     else if (regex[0] == '(' ){
