@@ -290,6 +290,7 @@ let btn_submit = document.getElementById("btn");
 let slider = document.getElementById("myRange");
 let dict = null;
 btn_submit.addEventListener("click", () => {
+    all = []
     taken_values=0;
     d3.selectAll("svg > *").remove();
     let regex = document.getElementById("regex").value;
