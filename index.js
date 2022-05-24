@@ -265,23 +265,16 @@ function prepare_graph(cosa){
     
     cosa.nodes.forEach( node => {
         node.set = 5;
-        if (cosa.initial == node.id && cosa.acceptance.includes(node.id)){
-            console.log('aqui')
-            node.set = 1 //rjo
-        }
-        else if (cosa.acceptance.includes(node.id)){
+        if (cosa.acceptance.includes(node.id)){
             node.set = 0 // naranja
         }
-        else if (cosa.initial == node.id){
-            node.set = 2; // verde
-        }
-
     })
+    cosa.links.push({"source": cosa.initial, "target": cosa.initial,  "type": ""})
+    console.log(cosa)
     let graph = {
         "nodes":cosa.nodes,
         "links": cosa.links
     }
-    //console.log(cosa)
     return graph
 }
 
@@ -315,7 +308,7 @@ slider.addEventListener("change", () => {
 })
 
 
-const terminales = ["0","1", "a", "b", "c"]
+const terminales = ["0","1","2","3","4","5","6","7","8","9", 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 let my_graph = null;
 let offset = 0;
 
