@@ -260,7 +260,7 @@ class Graph{
 
     }
 }
-
+first = true
 function prepare_graph(cosa){
     
     cosa.nodes.forEach( node => {
@@ -269,7 +269,9 @@ function prepare_graph(cosa){
             node.set = 0 // naranja
         }
     })
-    cosa.links.push({"source": cosa.initial, "target": cosa.initial,  "type": ""})
+    if (first){
+        cosa.links.push({"source": cosa.initial, "target": cosa.initial,  "type": ""})
+    }
     console.log(cosa)
     let graph = {
         "nodes":cosa.nodes,
@@ -283,6 +285,7 @@ let btn_submit = document.getElementById("btn");
 let slider = document.getElementById("myRange");
 let dict = null;
 btn_submit.addEventListener("click", () => {
+    first = true;
     all = []
     taken_values=0;
     d3.selectAll("svg > *").remove();
@@ -300,6 +303,7 @@ btn_submit.addEventListener("click", () => {
 })
 
 slider.addEventListener("change", () => {
+    first = false;
     let val = slider.value;
     d3.selectAll("svg > *").remove();
     console.log(all[val-1]);
