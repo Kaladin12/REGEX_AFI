@@ -1,5 +1,5 @@
 # REGEX_AFI
-School project for a visualized REGEX to AFI conversion
+School project for a visualized REGEX to NFA (Nondeterministic Finite Automaton) conversion
 
 ## Hecho por
 - Marco Vélez
